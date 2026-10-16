@@ -17,6 +17,10 @@ import { PlayerCard } from './components/PlayerCard';
 import { ProfileComparison } from './components/ProfileComparison';
 import { NewspaperSection } from './components/NewspaperSection';
 import { AdminPanel } from './components/AdminPanel';
+import { SecretRadioTab, SecretPopupState } from './components/SecretRadioTab';
+import { PlayerDossierModal } from './components/PlayerDossierModal';
+import { EquipmentLabTab } from './components/EquipmentLabTab';
+import { resolveAryanZohan, resolveDipayan } from './data/specialCharacters';
 import {
   Search,
   Filter,
@@ -24,7 +28,9 @@ import {
   CheckCircle2,
   Lock,
   UserPlus,
+  AlertCircle,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
   const initial = loadStoredData();
@@ -44,6 +50,24 @@ export default function App() {
     return 'profiles';
   });
 
+  // Secret Radio State
+  const [isSecretUnlocked, setIsSecretUnlocked] = useState(false);
+  const [isFlashingRedWarning, setIsFlashingRedWarning] = useState(false);
+  const [dossierPlayer, setDossierPlayer] = useState<PlayerProfile | null>(null);
+  const [secretPopup, setSecretPopup] = useState<SecretPopupState | null>(null);
+
+
+
+  // Auto-close secret popup if autoCloseMs is set
+  useEffect(() => {
+    if (secretPopup?.autoCloseMs) {
+      const timer = setTimeout(() => {
+        setSecretPopup(null);
+      }, secretPopup.autoCloseMs);
+      return () => clearTimeout(timer);
+    }
+  }, [secretPopup]);
+
   // URL synchronization for /admin
   useEffect(() => {
     const handlePopState = () => {
@@ -62,6 +86,29 @@ export default function App() {
     } else {
       window.history.pushState(null, '', '/');
     }
+  };
+
+  const handleOpenSecretRadio = () => {
+    setIsSecretUnlocked(true);
+    handleTabChange('secret_radio');
+  };
+
+  const handleSecretKickOut = (popup: SecretPopupState) => {
+    setIsSecretUnlocked(false);
+    handleTabChange('newspaper');
+    setSecretPopup(popup);
+  };
+
+  const handleOpenCharacterDossier = (char: 'aryan' | 'dipayan') => {
+    const targetPlayer = char === 'aryan' ? resolveAryanZohan(players) : resolveDipayan(players);
+    setDossierPlayer(targetPlayer);
+  };
+
+  const handleTriggerRedAlert = () => {
+    setIsFlashingRedWarning(true);
+    setTimeout(() => {
+      setIsFlashingRedWarning(false);
+    }, 3000);
   };
 
   // Compare targets
@@ -165,12 +212,21 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-100 cyber-grid flex flex-col selection:bg-cyan-500 selection:text-black">
+      {/* Emergency Red Warning Lights Flash Overlay (3-second duration) */}
+      {isFlashingRedWarning && (
+        <div
+          id="emergency-red-warning-lights"
+          className="fixed inset-0 z-50 pointer-events-none animate-pulse bg-rose-600/35 border-[16px] border-rose-600 shadow-[inset_0_0_120px_rgba(225,29,72,0.9)]"
+        />
+      )}
+
       {/* Header with Navigation */}
       <Header
         activeTab={activeTab}
         onTabChange={handleTabChange}
         syncStatus={syncStatus}
         autoSaveCountdown={autoSaveCountdown}
+        isSecretUnlocked={isSecretUnlocked}
       />
 
       {/* Floating Auto-Sync Notification */}
@@ -251,6 +307,8 @@ export default function App() {
               </div>
             </div>
 
+
+
             {/* Filter and Search Bar */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
               {/* Search */}
@@ -261,6 +319,13 @@ export default function App() {
                   type="text"
                   value={playerSearchQuery}
                   onChange={(e) => setPlayerSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && playerSearchQuery.trim().toLowerCase() === '/admin') {
+                      e.preventDefault();
+                      handleTabChange('admin');
+                      setPlayerSearchQuery('');
+                    }
+                  }}
                   placeholder="Search athlete by name or title..."
                   className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
                 />
@@ -315,6 +380,28 @@ export default function App() {
                       </button>
                     </div>
                   </>
+                ) : playerSearchQuery.trim().toLowerCase() === '/admin' ? (
+                  <div className="p-8 text-center text-slate-300 font-mono bg-slate-950/80 rounded-2xl border border-cyan-500/50 space-y-3">
+                    <Lock className="w-8 h-8 text-cyan-400 mx-auto animate-pulse" />
+                    <p className="text-sm font-bold text-cyan-300 uppercase tracking-wider">
+                      Admin Security Protocol Detected
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      Press [Enter] on your keyboard or click below to enter the League Admin Console.
+                    </p>
+                    <div className="pt-2">
+                      <button
+                        onClick={() => {
+                          handleTabChange('admin');
+                          setPlayerSearchQuery('');
+                        }}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-950 hover:bg-cyan-900 border border-cyan-400 text-cyan-300 font-mono text-xs font-bold tracking-wider transition-colors cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                      >
+                        <Lock className="w-4 h-4" />
+                        <span>ENTER ADMIN CONSOLE</span>
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <p className="text-sm text-slate-400">No athletes matched your query "{playerSearchQuery}".</p>
                 )}
@@ -333,15 +420,37 @@ export default function App() {
           />
         )}
 
-        {/* TAB 3: THE CHRONICLE (NEWSPAPER ARCHIVE) */}
+        {/* TAB 3: EQUIPMENT LAB (Directly after Clash Compare) */}
+        {activeTab === 'equipment' && (
+          <EquipmentLabTab />
+        )}
+
+        {/* TAB 4: THE CHRONICLE (NEWSPAPER ARCHIVE) */}
         {activeTab === 'newspaper' && (
           <NewspaperSection
             newspapers={newspapers}
             onNavigateToAdmin={() => handleTabChange('admin')}
+            onOpenSecretRadio={handleOpenSecretRadio}
           />
         )}
 
-        {/* TAB 4: ADMIN SYSTEM */}
+        {/* TAB 5: SECRET CLASSIFIED RADIO (??? TAB) */}
+        {activeTab === 'secret_radio' && (
+          <SecretRadioTab
+            onKickOut={handleSecretKickOut}
+            onOpenDossier={handleOpenCharacterDossier}
+            onTriggerRedAlert={handleTriggerRedAlert}
+            onCustomBatNo={() =>
+              handleSecretKickOut({
+                title: 'DISCONNECT',
+                message: '. . .',
+                isRedText: true,
+              })
+            }
+          />
+        )}
+
+        {/* TAB 6: ADMIN SYSTEM (Accessed securely via /admin) */}
         {activeTab === 'admin' && (
           <AdminPanel
             players={players}
@@ -365,6 +474,62 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* ─── CHARACTER DOSSIER MODAL (ARYAN ZOHAN / DIPAYAN / OTHERS) ─── */}
+      <PlayerDossierModal
+        player={dossierPlayer}
+        isOpen={!!dossierPlayer}
+        onClose={() => setDossierPlayer(null)}
+        onCompareSelect={handleQuickCompare}
+      />
+
+      {/* ─── SECRET RADIO KICKOUT / TEXT POPUP MODAL ─── */}
+      <AnimatePresence>
+        {secretPopup && (
+          <div
+            id="secret-kickout-popup-backdrop"
+            onClick={() => setSecretPopup(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="max-w-md w-full bg-slate-950 rounded-2xl border-2 border-rose-500/80 p-6 shadow-[0_0_50px_rgba(244,63,94,0.5)] text-center space-y-4"
+            >
+              <div className="w-12 h-12 rounded-full bg-rose-950 border border-rose-500 flex items-center justify-center mx-auto text-rose-400">
+                <AlertCircle className="w-6 h-6 animate-pulse" />
+              </div>
+
+              {secretPopup.title && (
+                <h4 className="font-mono text-xs font-bold text-rose-400 tracking-wider uppercase">
+                  {secretPopup.title}
+                </h4>
+              )}
+
+              <p
+                className={`text-base font-mono leading-relaxed ${
+                  secretPopup.isRedText ? 'text-rose-500 font-bold' : 'text-white font-medium'
+                }`}
+              >
+                {secretPopup.message}
+              </p>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  id="btn-dismiss-secret-popup"
+                  onClick={() => setSecretPopup(null)}
+                  className="px-6 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs font-bold cursor-pointer transition-colors"
+                >
+                  DISMISS
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Clean Minimalist Footer (NO password, NO fluff) */}
       <footer className="mt-auto border-t border-slate-900 bg-slate-950/80 py-5 text-center text-xs font-mono text-slate-500">

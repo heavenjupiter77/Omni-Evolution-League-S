@@ -6,6 +6,48 @@ const STORAGE_KEY_NEWSPAPERS = 'oel_newspapers_v2';
 const STORAGE_KEY_LAST_SAVED = 'oel_last_saved_v2';
 const STORAGE_KEY_SYNC_LOGS = 'oel_sync_logs_v2';
 const STORAGE_KEY_SHEET_MOCK = 'oel_sheets_hash_v2';
+const STORAGE_KEY_ZOHAN_IMAGE = 'oel_zohan_flashbang_image_v1';
+const STORAGE_KEY_ZOHAN_AUDIO = 'oel_zohan_flashbang_audio_v1';
+
+export interface ZohanFlashbangAssets {
+  imageDataUrl: string | null;
+  audioDataUrl: string | null;
+}
+
+export function getZohanFlashbangAssets(): ZohanFlashbangAssets {
+  try {
+    return {
+      imageDataUrl: localStorage.getItem(STORAGE_KEY_ZOHAN_IMAGE),
+      audioDataUrl: localStorage.getItem(STORAGE_KEY_ZOHAN_AUDIO),
+    };
+  } catch {
+    return { imageDataUrl: null, audioDataUrl: null };
+  }
+}
+
+export function saveZohanFlashbangImage(dataUrl: string | null): void {
+  try {
+    if (dataUrl) {
+      localStorage.setItem(STORAGE_KEY_ZOHAN_IMAGE, dataUrl);
+    } else {
+      localStorage.removeItem(STORAGE_KEY_ZOHAN_IMAGE);
+    }
+  } catch (err) {
+    console.error('Failed to save Zohan flashbang image to localStorage', err);
+  }
+}
+
+export function saveZohanFlashbangAudio(dataUrl: string | null): void {
+  try {
+    if (dataUrl) {
+      localStorage.setItem(STORAGE_KEY_ZOHAN_AUDIO, dataUrl);
+    } else {
+      localStorage.removeItem(STORAGE_KEY_ZOHAN_AUDIO);
+    }
+  } catch (err) {
+    console.error('Failed to save Zohan flashbang audio to localStorage', err);
+  }
+}
 
 export interface StorageData {
   players: PlayerProfile[];

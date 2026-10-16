@@ -1,15 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { NewspaperEdition } from '../types';
-import { Search, Calendar, ChevronRight, Newspaper, X, Flame, Clock, Plus } from 'lucide-react';
+import { Search, Calendar, ChevronRight, Newspaper, X, Flame, Clock, Plus, Radio } from 'lucide-react';
 
 interface NewspaperSectionProps {
   newspapers: NewspaperEdition[];
   onNavigateToAdmin?: () => void;
+  onOpenSecretRadio?: () => void;
 }
 
 export const NewspaperSection: React.FC<NewspaperSectionProps> = ({
   newspapers,
   onNavigateToAdmin,
+  onOpenSecretRadio,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(8);
@@ -27,6 +29,14 @@ export const NewspaperSection: React.FC<NewspaperSectionProps> = ({
         n.articles.some((a) => a.heading.toLowerCase().includes(q))
     );
   }, [newspapers, searchQuery]);
+
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    setVisibleCount(8);
+    if (val.trim() === '???') {
+      onOpenSecretRadio?.();
+    }
+  };
 
   // Paginated list
   const displayEditions = filteredEditions.slice(0, visibleCount);
@@ -89,9 +99,11 @@ export const NewspaperSection: React.FC<NewspaperSectionProps> = ({
             id="input-newspaper-search"
             type="text"
             value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setVisibleCount(8);
+            onChange={(e) => handleSearchChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && searchQuery.trim() === '???') {
+                onOpenSecretRadio?.();
+              }
             }}
             placeholder="Search editions..."
             className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-cyan-500/30 focus:border-cyan-400 rounded-xl text-sm font-mono text-white placeholder-slate-500 focus:outline-none transition-colors"
@@ -107,8 +119,34 @@ export const NewspaperSection: React.FC<NewspaperSectionProps> = ({
         </div>
       </div>
 
-      {/* When no results match search */}
-      {filteredEditions.length === 0 && (
+      {/* Secret Frequency Intercept Prompt */}
+      {searchQuery.trim() === '???' && (
+        <div className="bg-rose-950/40 border-2 border-rose-500 rounded-2xl p-6 shadow-[0_0_30px_rgba(244,63,94,0.3)] flex flex-col sm:flex-row items-center justify-between gap-4 animate-pulse">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-rose-900 border border-rose-400 flex items-center justify-center text-rose-300 flex-shrink-0">
+              <Radio className="w-5 h-5 animate-spin" />
+            </div>
+            <div>
+              <h4 className="font-mono font-bold text-rose-300 text-sm tracking-wider">
+                FREQUENCY ??? INTERCEPTED
+              </h4>
+              <p className="text-xs text-rose-200/80 font-mono">
+                Classified shortwave transceiver discovered in Chronicle archives.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => onOpenSecretRadio?.()}
+            className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold tracking-wider shadow-[0_0_15px_rgba(244,63,94,0.5)] cursor-pointer transition-all"
+          >
+            TUNE TO SECRET RADIO &rarr;
+          </button>
+        </div>
+      )}
+
+      {/* When no results match search (and not ???) */}
+      {filteredEditions.length === 0 && searchQuery.trim() !== '???' && (
         <div className="bg-slate-950/80 rounded-2xl border border-slate-800 p-12 text-center text-slate-400 font-mono">
           <p className="text-base text-slate-300">No newspaper edition found matching "{searchQuery}".</p>
           <p className="text-xs text-slate-500 mt-2">Try searching by keyword or clear the search query.</p>

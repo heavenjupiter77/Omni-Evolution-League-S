@@ -1,13 +1,14 @@
 import React from 'react';
-import { Swords, Newspaper, Shield, Lock, FileSpreadsheet, Activity } from 'lucide-react';
+import { Swords, Newspaper, Shield, FileSpreadsheet, Radio, Sliders } from 'lucide-react';
 
-export type MainTab = 'profiles' | 'compare' | 'newspaper' | 'admin';
+export type MainTab = 'profiles' | 'compare' | 'equipment' | 'newspaper' | 'admin' | 'secret_radio';
 
 interface HeaderProps {
   activeTab: MainTab;
   onTabChange: (tab: MainTab) => void;
   syncStatus: 'idle' | 'syncing' | 'synced' | 'alert';
   autoSaveCountdown: number;
+  isSecretUnlocked?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -15,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   onTabChange,
   syncStatus,
   autoSaveCountdown,
+  isSecretUnlocked = false,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-cyan-500/30">
@@ -42,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Main Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* Brand & Title (Image & subtitle removed per instructions, main title kept) */}
+        {/* Brand & Title */}
         <div className="flex items-center justify-between">
           <button
             onClick={() => onTabChange('profiles')}
@@ -52,15 +54,6 @@ export const Header: React.FC<HeaderProps> = ({
               OMNI EVOLUTION LEAGUE
             </h1>
           </button>
-
-          {/* Mobile Admin Link */}
-          <button
-            onClick={() => onTabChange('admin')}
-            className="md:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-cyan-500/40 text-cyan-300 font-mono text-xs hover:border-cyan-400 hover:bg-slate-800 transition-colors"
-          >
-            <Lock className="w-3 h-3" />
-            <span>/admin</span>
-          </button>
         </div>
 
         {/* Tab Navigation with Theme-Based Horizontal Scroll */}
@@ -69,58 +62,74 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-thin scrollbar-thumb-cyan-700 scrollbar-track-slate-950"
             id="main-navigation-tabs"
           >
-          <button
-            id="nav-tab-profiles"
-            onClick={() => onTabChange('profiles')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'profiles'
-                ? 'bg-cyan-950/90 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            <Shield className="w-3.5 h-3.5" />
-            <span>ATHLETE METRICS</span>
-          </button>
+            <button
+              id="nav-tab-profiles"
+              onClick={() => onTabChange('profiles')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
+                activeTab === 'profiles'
+                  ? 'bg-cyan-950/90 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800'
+              }`}
+            >
+              <Shield className="w-3.5 h-3.5" />
+              <span>ATHLETE METRICS</span>
+            </button>
 
-          <button
-            id="nav-tab-compare"
-            onClick={() => onTabChange('compare')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'compare'
-                ? 'bg-cyan-950/90 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            <Swords className="w-3.5 h-3.5" />
-            <span>CLASH COMPARE</span>
-          </button>
+            <button
+              id="nav-tab-compare"
+              onClick={() => onTabChange('compare')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
+                activeTab === 'compare'
+                  ? 'bg-cyan-950/90 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800'
+              }`}
+            >
+              <Swords className="w-3.5 h-3.5" />
+              <span>CLASH COMPARE</span>
+            </button>
 
-          <button
-            id="nav-tab-newspaper"
-            onClick={() => onTabChange('newspaper')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'newspaper'
-                ? 'bg-cyan-950/90 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            <Newspaper className="w-3.5 h-3.5" />
-            <span>THE CHRONICLE</span>
-          </button>
+            {/* TAB: EQUIPMENT LAB */}
+            <button
+              id="nav-tab-equipment"
+              onClick={() => onTabChange('equipment')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
+                activeTab === 'equipment'
+                  ? 'bg-cyan-950/90 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800'
+              }`}
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>EQUIPMENT LAB</span>
+            </button>
 
-          <button
-            id="nav-tab-admin"
-            onClick={() => onTabChange('admin')}
-            className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'admin'
-                ? 'bg-cyan-950/90 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.35)]'
-                : 'text-cyan-400/80 border border-cyan-500/20 hover:border-cyan-400 hover:bg-cyan-950/30'
-            }`}
-          >
-            <Lock className="w-3.5 h-3.5 text-cyan-400" />
-            <span>/ADMIN</span>
-          </button>
-        </nav>
+            <button
+              id="nav-tab-newspaper"
+              onClick={() => onTabChange('newspaper')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
+                activeTab === 'newspaper'
+                  ? 'bg-cyan-950/90 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800'
+              }`}
+            >
+              <Newspaper className="w-3.5 h-3.5" />
+              <span>THE CHRONICLE</span>
+            </button>
+
+            {(isSecretUnlocked || activeTab === 'secret_radio') && (
+              <button
+                id="nav-tab-secret-radio"
+                onClick={() => onTabChange('secret_radio')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
+                  activeTab === 'secret_radio'
+                    ? 'bg-rose-950/90 border border-rose-500 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.4)] animate-pulse'
+                    : 'text-rose-400 hover:text-rose-200 bg-rose-950/40 border border-rose-900/60 hover:border-rose-500'
+                }`}
+              >
+                <Radio className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
+                <span>???</span>
+              </button>
+            )}
+          </nav>
         </div>
       </div>
     </header>

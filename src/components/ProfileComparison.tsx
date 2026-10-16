@@ -417,7 +417,7 @@ export const ProfileComparison: React.FC<ProfileComparisonProps> = ({
                       Tactical Matchup Assessment
                     </h4>
                     <span className="text-[11px] font-mono text-slate-400">
-                      Archetype Clash & Statistical Metric Tier Alignment
+                      Archetype Clash & Strategic Dynamics
                     </span>
                   </div>
                 </div>
@@ -459,82 +459,6 @@ export const ProfileComparison: React.FC<ProfileComparisonProps> = ({
                 </div>
               </div>
 
-              {/* Structured Stat Differential Matrix Grid (Replaces inline bullet text) */}
-              <div className="pt-1">
-                <div className="flex items-center justify-between mb-2.5">
-                  <span className="font-mono text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-cyan-400" />
-                    Stat Tier Differentials (6 Dimensions)
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-500">Tier Margin Analysis</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {assessment.statDifferentials.map((item) => {
-                    const isP1 = item.leader === 'p1';
-                    const isP2 = item.leader === 'p2';
-                    const isTie = item.leader === 'tie';
-
-                    return (
-                      <div
-                        key={item.code}
-                        className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between space-y-2.5 ${
-                          isP1
-                            ? 'bg-cyan-950/20 border-cyan-500/35 hover:border-cyan-500/50'
-                            : isP2
-                            ? 'bg-fuchsia-950/20 border-fuchsia-500/35 hover:border-fuchsia-500/50'
-                            : 'bg-slate-950/70 border-slate-800 hover:border-slate-700'
-                        }`}
-                      >
-                        {/* Top row: Metric Code + Badge */}
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                            <span className="text-cyan-400">{item.code}</span>
-                            <span className="text-slate-300 text-xs font-medium truncate max-w-[150px]">
-                              {item.name}
-                            </span>
-                          </span>
-
-                          <span
-                            className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold uppercase whitespace-nowrap ${
-                              isP1
-                                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                                : isP2
-                                ? 'bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40'
-                                : 'bg-slate-800 text-slate-400 border border-slate-700'
-                            }`}
-                          >
-                            {isTie ? 'Parity' : item.badgeText}
-                          </span>
-                        </div>
-
-                        {/* Middle row: Head-to-Head Ranks */}
-                        <div className="flex items-center justify-between text-xs font-mono py-1.5 px-2.5 rounded-lg bg-black/50 border border-slate-800/80">
-                          <div className="flex items-center gap-2">
-                            <span className="text-cyan-300 font-bold truncate max-w-[95px] text-xs">{p1.name}</span>
-                            <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${getRankBadgeStyle(item.p1Rank).text} ${getRankBadgeStyle(item.p1Rank).bg}`}>
-                              {item.p1Rank}
-                            </span>
-                          </div>
-                          <span className="text-slate-600 text-xs font-bold">vs</span>
-                          <div className="flex items-center gap-2">
-                            <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${getRankBadgeStyle(item.p2Rank).text} ${getRankBadgeStyle(item.p2Rank).bg}`}>
-                              {item.p2Rank}
-                            </span>
-                            <span className="text-fuchsia-300 font-bold truncate max-w-[95px] text-xs">{p2.name}</span>
-                          </div>
-                        </div>
-
-                        {/* Bottom row: Tactical Takeaway */}
-                        <p className="text-xs text-slate-300 font-mono leading-relaxed">
-                          {item.takeaway}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
               {/* Click to expand full in-depth match analysis button */}
               <div className="pt-2">
                 <button
@@ -562,7 +486,7 @@ export const ProfileComparison: React.FC<ProfileComparisonProps> = ({
                   id="expanded-in-depth-match-analysis"
                   className="mt-4 pt-4 border-t border-cyan-500/30 space-y-4 animate-fadeIn"
                 >
-                  {/* 4-Phase Head-to-Head Simulation */}
+                  {/* 4-Phase Head-to-Head Simulation - Full Width Grid for Maximum Readability */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-cyan-400 font-bold uppercase text-xs flex items-center gap-1.5">
@@ -572,56 +496,57 @@ export const ProfileComparison: React.FC<ProfileComparisonProps> = ({
                       <span className="text-[10px] font-mono text-slate-500">Sequential Rally Flow</span>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-4">
                       {assessment.phases.map((phase) => (
                         <div
                           key={phase.phaseNumber}
-                          className="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800/90 text-xs space-y-2 flex flex-col justify-between overflow-hidden"
+                          className="p-4 sm:p-5 rounded-xl bg-slate-950/95 border border-slate-800 shadow-md space-y-3.5"
                         >
-                          {/* Phase Header */}
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-800/80">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="px-1.5 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono text-[10px] font-bold flex-shrink-0">
+                          {/* Phase Header Row: Phase Identifier + Verdict Badge */}
+                          <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 border-b border-slate-800/80">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="px-2.5 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono text-[10px] font-bold tracking-wider flex-shrink-0">
                                 PHASE {phase.phaseNumber}
                               </span>
-                              <div className="min-w-0">
-                                <span className="font-mono font-bold text-white text-xs block truncate">
-                                  {phase.title}
-                                </span>
-                                <span className="text-[10px] font-mono text-slate-400 block truncate">
-                                  {phase.metricsClash}
-                                </span>
-                              </div>
+                              <span className="px-2.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-cyan-400 font-medium">
+                                {phase.metricsClash}
+                              </span>
                             </div>
 
                             <span
-                              className={`font-mono text-[10px] px-2.5 py-1 rounded-full font-bold uppercase self-start sm:self-center flex-shrink-0 max-w-full truncate ${
+                              className={`font-mono text-[11px] px-3 py-1 rounded-full font-bold uppercase whitespace-nowrap flex-shrink-0 ${
                                 phase.edge === 'p1'
                                   ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/50'
                                   : phase.edge === 'p2'
                                   ? 'bg-fuchsia-950 text-fuchsia-300 border border-fuchsia-500/50'
                                   : 'bg-slate-900 text-slate-400 border border-slate-700'
                               }`}
-                              title={phase.verdict}
                             >
                               {phase.verdict}
                             </span>
                           </div>
 
-                          {/* Key Factor & Table Outcome */}
-                          <div className="space-y-1.5 text-[11px] font-mono">
-                            <div className="p-2 rounded-lg bg-black/40 border border-slate-800/80">
-                              <span className="text-slate-400 font-bold block text-[10px] uppercase mb-0.5">
+                          {/* Phase Title: Dedicated Line, Generous Space, Zero Truncation */}
+                          <div>
+                            <h5 className="font-mono font-bold text-white text-sm sm:text-base leading-snug">
+                              {phase.title}
+                            </h5>
+                          </div>
+
+                          {/* Key Factor & Table Outcome side-by-side with ample horizontal room */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5 text-xs font-mono">
+                            <div className="p-3 rounded-lg bg-black/50 border border-slate-800/90 space-y-1">
+                              <span className="text-slate-400 font-bold block text-[10px] uppercase tracking-wider">
                                 Tactical Dynamic:
                               </span>
-                              <p className="text-slate-300 leading-snug">{phase.keyTacticalFactor}</p>
+                              <p className="text-slate-200 leading-relaxed">{phase.keyTacticalFactor}</p>
                             </div>
 
-                            <div className="p-2 rounded-lg bg-black/40 border border-slate-800/80">
-                              <span className="text-cyan-400 font-bold block text-[10px] uppercase mb-0.5">
+                            <div className="p-3 rounded-lg bg-black/50 border border-slate-800/90 space-y-1">
+                              <span className="text-cyan-400 font-bold block text-[10px] uppercase tracking-wider">
                                 Table Outcome:
                               </span>
-                              <p className="text-slate-300 leading-snug">{phase.tableOutcome}</p>
+                              <p className="text-slate-200 leading-relaxed">{phase.tableOutcome}</p>
                             </div>
                           </div>
                         </div>
@@ -725,11 +650,16 @@ export const ProfileComparison: React.FC<ProfileComparisonProps> = ({
               p2.name
             );
 
+            // Stat tier differential data for this metric
+            const statDiff = assessment.statDifferentials.find(
+              (item) => item.metricKey === def.key || item.code === def.code
+            );
+
             return (
               <div
                 key={def.key}
                 id={`compare-metric-${def.key}`}
-                className="bg-slate-900/60 rounded-xl p-4 border border-slate-800 hover:border-slate-700 transition-colors space-y-3"
+                className="bg-slate-900/60 rounded-xl p-4 sm:p-5 border border-slate-800 hover:border-slate-700 transition-colors space-y-4"
               >
                 {/* Metric Title and Verdict */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -743,23 +673,29 @@ export const ProfileComparison: React.FC<ProfileComparisonProps> = ({
                     </span>
                   </div>
 
-                  {/* Advantage pill */}
-                  <div>
+                  {/* Advantage and Tier Margin pill */}
+                  <div className="flex items-center gap-2 flex-wrap">
                     {winner === 'p1' && (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-950/70 border border-cyan-500/60 text-cyan-300 font-mono font-bold text-xs">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-950/70 border border-cyan-500/60 text-cyan-300 font-mono font-bold text-xs">
                         <CheckCircle className="w-3.5 h-3.5 text-cyan-400" />
                         {p1.name} Advantage ({r1} vs {r2})
+                        <span className="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-200 text-[10px]">
+                          +{statDiff?.tierDiff || 1} Tier{(statDiff?.tierDiff || 1) > 1 ? 's' : ''}
+                        </span>
                       </span>
                     )}
                     {winner === 'p2' && (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-fuchsia-950/70 border border-fuchsia-500/60 text-fuchsia-300 font-mono font-bold text-xs">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-fuchsia-950/70 border border-fuchsia-500/60 text-fuchsia-300 font-mono font-bold text-xs">
                         <CheckCircle className="w-3.5 h-3.5 text-fuchsia-400" />
                         {p2.name} Advantage ({r2} vs {r1})
+                        <span className="px-1.5 py-0.2 rounded bg-fuchsia-500/20 text-fuchsia-200 text-[10px]">
+                          +{statDiff?.tierDiff || 1} Tier{(statDiff?.tierDiff || 1) > 1 ? 's' : ''}
+                        </span>
                       </span>
                     )}
                     {winner === 'tie' && (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300 font-mono text-xs">
-                        Equal Tier ({r1})
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300 font-mono text-xs">
+                        Equal Tier ({r1}) • Parity (0 Gap)
                       </span>
                     )}
                   </div>
@@ -803,6 +739,91 @@ export const ProfileComparison: React.FC<ProfileComparisonProps> = ({
                     </div>
                   </div>
                 </div>
+
+                {/* Stat Tier Difference & Tactical Impact (Integrated into Detailed Metric Breakdown) */}
+                {statDiff && (
+                  <div
+                    className={`p-4 rounded-xl border flex flex-col gap-3 font-mono transition-all ${
+                      statDiff.leader === 'p1'
+                        ? 'bg-cyan-950/25 border-cyan-500/40'
+                        : statDiff.leader === 'p2'
+                        ? 'bg-fuchsia-950/25 border-fuchsia-500/40'
+                        : 'bg-slate-950/80 border-slate-800'
+                    }`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider flex items-center gap-1.5">
+                          <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                          Stat Tier Difference & Tactical Impact:
+                        </span>
+                        <span
+                          className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                            statDiff.leader === 'p1'
+                              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                              : statDiff.leader === 'p2'
+                              ? 'bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40'
+                              : 'bg-slate-800 text-slate-400 border border-slate-700'
+                          }`}
+                        >
+                          {statDiff.leader === 'tie'
+                            ? 'Level Playing Field (0 Tier Gap)'
+                            : `${statDiff.badgeText} • ${statDiff.leaderName}`}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 self-start sm:self-auto">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Tier Margin:</span>
+                        <span
+                          className={`text-xs font-bold px-2 py-0.5 rounded bg-black/60 border border-slate-800 ${
+                            statDiff.leader === 'p1'
+                              ? 'text-cyan-400 border-cyan-500/40'
+                              : statDiff.leader === 'p2'
+                              ? 'text-fuchsia-400 border-fuchsia-500/40'
+                              : 'text-slate-400'
+                          }`}
+                        >
+                          {statDiff.tierDiff === 0
+                            ? 'Parity (0 Gap)'
+                            : `+${statDiff.tierDiff} Tier${statDiff.tierDiff > 1 ? 's' : ''}`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Step Scale: D -> C -> B -> A -> S */}
+                    <div className="p-2.5 rounded-lg bg-black/40 border border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                      <span className="text-slate-400 text-[10px] uppercase font-bold">Tier Alignment Scale:</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap">
+                        {(['D', 'C', 'B', 'A', 'S'] as const).map((grade) => {
+                          const isP1 = r1 === grade;
+                          const isP2 = r2 === grade;
+                          return (
+                            <div
+                              key={grade}
+                              className={`px-2 py-0.5 rounded border text-[10px] font-bold flex items-center gap-1 ${
+                                isP1 && isP2
+                                  ? 'bg-amber-950/70 border-amber-400 text-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                                  : isP1
+                                  ? 'bg-cyan-950/80 border-cyan-400 text-cyan-300 shadow-[0_0_8px_rgba(6,182,212,0.4)]'
+                                  : isP2
+                                  ? 'bg-fuchsia-950/80 border-fuchsia-400 text-fuchsia-300 shadow-[0_0_8px_rgba(217,70,239,0.4)]'
+                                  : 'bg-slate-900/60 border-slate-800 text-slate-500'
+                              }`}
+                            >
+                              <span>{grade}</span>
+                              {isP1 && <span className="text-[9px] text-cyan-300 font-mono">[{p1.name.slice(0, 3)}]</span>}
+                              {isP2 && <span className="text-[9px] text-fuchsia-300 font-mono">[{p2.name.slice(0, 3)}]</span>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-300 leading-relaxed pt-0.5">
+                      {statDiff.takeaway}
+                    </p>
+                  </div>
+                )}
 
                 {/* Skill Tier Breakdown & Head-to-Head Clash Cards */}
                 <div className="pt-3 border-t border-slate-800/80 space-y-3">
