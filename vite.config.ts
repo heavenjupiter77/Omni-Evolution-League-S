@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: './', // 👈 ADD THIS LINE so paths work on GitHub Pages
+    base: '/Omni-Evolution-League-S/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
